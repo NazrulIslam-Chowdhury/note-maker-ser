@@ -2,13 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
-const path = require("path");
-
 const app = express();
 const port = process.env.PORT || 5000;
 
 // middleware
 app.use(express.json());
+app.use(
+  cors({
+    methods: ["POST", "GET", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  })
+);
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.hnlrj23.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -20,13 +23,6 @@ const client = new MongoClient(uri, {
     deprecationErrors: true,
   },
 });
-const __dirname = path.resolve();
-
-app.use(
-  cors({
-    methods: ["POST", "GET", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  })
-);
 
 // routes
 async function run() {
@@ -182,10 +178,4 @@ app.get("/", (req, res) => {
 
 app.listen(port, () => {
   console.log(`Server is running on port:${port}`);
-});
-
-app.use(express.static(path.join(__dirname, "/client/dist")));
-
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "client", "dist", "index.html"));
 });
